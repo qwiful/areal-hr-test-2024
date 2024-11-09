@@ -2,4 +2,4 @@
    node_modules/
 
 # Игнорировать файл окружения
-   .env
+   docs/.env
