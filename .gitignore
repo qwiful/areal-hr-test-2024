@@ -3,3 +3,7 @@
 
 # Игнорировать файл окружения
    docs/.env
+
+# Игнорировать файлы
+   package-lock.json
+   package.json
