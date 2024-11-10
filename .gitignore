@@ -1,9 +1,9 @@
 # Игнорировать директорию node_modules
-   node_modules/
+node_modules/
 
 # Игнорировать файл окружения
-   docs/.env
+docs/.env
 
 # Игнорировать файлы
-   package-lock.json
-   package.json
+package-lock.json
+package.json
