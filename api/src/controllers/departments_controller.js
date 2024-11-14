@@ -1,6 +1,23 @@
+const Joi = require("joi");
+
+const departmentSchema = Joi.object({
+  id_organization: Joi.number().integer().required(),
+  name: Joi.string().min(1).max(50).required(),
+  id_parent: Joi.number().integer().required(),
+  comment: Joi.string().max(250).required(),
+});
+
+const departmentIdSchema = Joi.object({
+  id: Joi.number().integer().required(),
+});
+
 module.exports = (pool) => {
   return {
     createDepartment: async (req, res) => {
+      const { error } = departmentSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id_organization, name, id_parent, comment } = req.body;
       try {
         const result = await pool.query(
@@ -23,6 +40,10 @@ module.exports = (pool) => {
     },
 
     getDepartmentById: async (req, res) => {
+      const { error } = departmentIdSchema.validate(req.params);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id } = req.params;
       try {
         const result = await pool.query(
@@ -41,6 +62,14 @@ module.exports = (pool) => {
 
     updateDepartment: async (req, res) => {
       const { id } = req.params;
+      const { error: idError } = departmentIdSchema.validate(req.params);
+      if (idError) {
+        return res.status(400).json({ error: idError.details[0].message });
+      }
+      const { error } = departmentSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id_organization, name, id_parent, comment } = req.body;
       try {
         const result = await pool.query(
@@ -58,6 +87,10 @@ module.exports = (pool) => {
     },
 
     deleteDepartment: async (req, res) => {
+      const { error } = departmentIdSchema.validate(req.params);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id } = req.params;
       try {
         const result = await pool.query(

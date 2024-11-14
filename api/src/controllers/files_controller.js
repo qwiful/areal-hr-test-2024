@@ -1,6 +1,22 @@
+const Joi = require("joi");
+
+const filesSchema = Joi.object({
+  name: Joi.string().min(1).max(50).required(),
+  file: Joi.string().min(1).max(100).required(),
+  id_worker: Joi.number().integer().required(),
+});
+
+const filesIdSchema = Joi.object({
+  id: Joi.number().integer().required(),
+});
+
 module.exports = (pool) => {
   return {
     createFile: async (req, res) => {
+      const { error } = filesSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { name, file, id_worker } = req.body;
       try {
         const result = await pool.query(
@@ -23,6 +39,10 @@ module.exports = (pool) => {
     },
 
     getFileById: async (req, res) => {
+      const { error } = filesIdSchema.validate(req.params);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id } = req.params;
       try {
         const result = await pool.query("SELECT * FROM files WHERE id = $1", [
@@ -40,6 +60,14 @@ module.exports = (pool) => {
 
     updateFile: async (req, res) => {
       const { id } = req.params;
+      const { error: idError } = filesIdSchema.validate(req.params);
+      if (idError) {
+        return res.status(400).json({ error: idError.details[0].message });
+      }
+      const { error } = filesSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { name, file, id_worker } = req.body;
       try {
         const result = await pool.query(
@@ -57,6 +85,10 @@ module.exports = (pool) => {
     },
 
     deleteFile: async (req, res) => {
+      const { error } = filesIdSchema.validate(req.params);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id } = req.params;
       try {
         const result = await pool.query(

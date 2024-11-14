@@ -1,6 +1,25 @@
+const Joi = require("joi");
+
+const workersSchema = Joi.object({
+  surname: Joi.string().min(1).max(50).required(),
+  name: Joi.string().min(1).max(50).required(),
+  patronymic: Joi.string().min(1).max(50).optional(),
+  date_of_birth: Joi.date().required(),
+  id_passport: Joi.number().integer().required(),
+  id_adress: Joi.number().integer().required(),
+});
+
+const workersIdSchema = Joi.object({
+  id: Joi.number().integer().required(),
+});
+
 module.exports = (pool) => {
   return {
     createWorker: async (req, res) => {
+      const { error } = workersSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const {
         surname,
         name,
@@ -30,6 +49,10 @@ module.exports = (pool) => {
     },
 
     getWorkerById: async (req, res) => {
+      const { error } = workersIdSchema.validate(req.params);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id } = req.params;
       try {
         const result = await pool.query("SELECT * FROM workers WHERE id = $1", [
@@ -47,6 +70,14 @@ module.exports = (pool) => {
 
     updateWorker: async (req, res) => {
       const { id } = req.params;
+      const { error: idError } = workersIdSchema.validate(req.params);
+      if (idError) {
+        return res.status(400).json({ error: idError.details[0].message });
+      }
+      const { error } = workersSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const {
         surname,
         name,
@@ -79,6 +110,10 @@ module.exports = (pool) => {
     },
 
     deleteWorker: async (req, res) => {
+      const { error } = workersIdSchema.validate(req.params);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id } = req.params;
       try {
         const result = await pool.query(

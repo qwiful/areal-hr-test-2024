@@ -1,6 +1,23 @@
+const Joi = require("joi");
+
+const changesSchema = Joi.object({
+  date_time_operation: Joi.date().required(),
+  who_changed: Joi.number().integer().required(),
+  object: Joi.string().min(1).max(100).required(),
+  changed_field: Joi.object().optional().required(),
+});
+
+const changesIdSchema = Joi.object({
+  id: Joi.number().integer().required(),
+});
+
 module.exports = (pool) => {
   return {
     createChange: async (req, res) => {
+      const { error } = changesSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { who_changed, object, changed_field } = req.body;
       try {
         const result = await pool.query(
@@ -23,6 +40,10 @@ module.exports = (pool) => {
     },
 
     getChangeById: async (req, res) => {
+      const { error } = changesSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id } = req.params;
       try {
         const result = await pool.query(
@@ -41,6 +62,14 @@ module.exports = (pool) => {
 
     updateChange: async (req, res) => {
       const { id } = req.params;
+      const { error: idError } = changesIdSchema.validate(req.params);
+      if (idError) {
+        return res.status(400).json({ error: idError.details[0].message });
+      }
+      const { error } = changesSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { who_changed, object, changed_field } = req.body;
       try {
         const result = await pool.query(
@@ -58,6 +87,10 @@ module.exports = (pool) => {
     },
 
     deleteChange: async (req, res) => {
+      const { error } = changesIdSchema.validate(req.params);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id } = req.params;
       try {
         const result = await pool.query(

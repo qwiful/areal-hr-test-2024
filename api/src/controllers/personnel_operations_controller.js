@@ -1,6 +1,26 @@
+const Joi = require("joi");
+
+const operationsSchema = Joi.object({
+  id_worker: Joi.number().integer().required(),
+  id_department: Joi.number().integer().required(),
+  id_position: Joi.number().integer().required(),
+  setting_salary: Joi.number().integer().required(),
+  salary_change: Joi.number().integer().optional(),
+  department_change: Joi.string().min(1).max(50).optional(),
+  delite_worker: Joi.boolean().required(),
+});
+
+const operationsIdSchema = Joi.object({
+  id: Joi.number().integer().required(),
+});
+
 module.exports = (pool) => {
   return {
     createOperation: async (req, res) => {
+      const { error } = operationsSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const {
         id_worker,
         id_department,
@@ -39,6 +59,10 @@ module.exports = (pool) => {
     },
 
     getOperationById: async (req, res) => {
+      const { error } = operationsIdSchema.validate(req.params);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id } = req.params;
       try {
         const result = await pool.query(
@@ -57,6 +81,14 @@ module.exports = (pool) => {
 
     updateOperation: async (req, res) => {
       const { id } = req.params;
+      const { error: idError } = operationsIdSchema.validate(req.params);
+      if (idError) {
+        return res.status(400).json({ error: idError.details[0].message });
+      }
+      const { error } = operationsSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const {
         id_worker,
         id_department,
@@ -91,6 +123,10 @@ module.exports = (pool) => {
     },
 
     deleteOperation: async (req, res) => {
+      const { error } = operationsIdSchema.validate(req.params);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id } = req.params;
       try {
         const result = await pool.query(

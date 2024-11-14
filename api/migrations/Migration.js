@@ -162,7 +162,7 @@ module.exports = {
       id: { type: "serial", primaryKey: true },
       date_time_operation: { type: "timestamp", default: pgm.func("NOW()") },
       who_changed: { type: "integer", notNULL: true },
-      object: { type: "varchar", notNULL: true },
+      object: { type: "varchar(100)", notNULL: true },
       changed_field: { type: "json", notNULL: true },
     });
     pgm.addConstraint("history_changes", "fk_specialist", {

@@ -1,6 +1,21 @@
+const Joi = require("joi");
+
+const organizationsSchema = Joi.object({
+  name: Joi.string().min(1).max(50).required(),
+  comment: Joi.string().max(250).required(),
+});
+
+const organizationsIdSchema = Joi.object({
+  id: Joi.number().integer().required(),
+});
+
 module.exports = (pool) => {
   return {
     createOrganization: async (req, res) => {
+      const { error } = organizationsSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { name, comment } = req.body;
       try {
         const result = await pool.query(
@@ -23,6 +38,10 @@ module.exports = (pool) => {
     },
 
     getOrganizationById: async (req, res) => {
+      const { error } = organizationsIdSchema.validate(req.params);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id } = req.params;
       try {
         const result = await pool.query(
@@ -41,6 +60,14 @@ module.exports = (pool) => {
 
     updateOrganization: async (req, res) => {
       const { id } = req.params;
+      const { error: idError } = organizationsIdSchema.validate(req.params);
+      if (idError) {
+        return res.status(400).json({ error: idError.details[0].message });
+      }
+      const { error } = organizationsSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { name, comment } = req.body;
       try {
         const result = await pool.query(
@@ -58,6 +85,10 @@ module.exports = (pool) => {
     },
 
     deleteOrganization: async (req, res) => {
+      const { error } = organizationsIdSchema.validate(req.params);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id } = req.params;
       try {
         const result = await pool.query(

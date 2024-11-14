@@ -1,6 +1,20 @@
+const Joi = require("joi");
+
+const positionsSchema = Joi.object({
+  name: Joi.string().min(1).max(50).required(),
+});
+
+const positionsIdSchema = Joi.object({
+  id: Joi.number().integer().required(),
+});
+
 module.exports = (pool) => {
   return {
     createPosition: async (req, res) => {
+      const { error } = positionsSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { name } = req.body;
       try {
         const result = await pool.query(
@@ -23,6 +37,10 @@ module.exports = (pool) => {
     },
 
     getPositionById: async (req, res) => {
+      const { error } = positionsIdSchema.validate(req.params);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id } = req.params;
       try {
         const result = await pool.query(
@@ -41,6 +59,14 @@ module.exports = (pool) => {
 
     updatePosition: async (req, res) => {
       const { id } = req.params;
+      const { error: idError } = positionsIdSchema.validate(req.params);
+      if (idError) {
+        return res.status(400).json({ error: idError.details[0].message });
+      }
+      const { error } = positionsSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { name } = req.body;
       try {
         const result = await pool.query(
@@ -58,6 +84,10 @@ module.exports = (pool) => {
     },
 
     deletePosition: async (req, res) => {
+      const { error } = positionsIdSchema.validate(req.params);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
       const { id } = req.params;
       try {
         const result = await pool.query(
