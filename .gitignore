@@ -3,7 +3,3 @@ node_modules/
 
 # Игнорировать файл окружения
 .env
-
-# Игнорировать файлы
-package-lock.json
-package.json
