@@ -18,7 +18,7 @@ app.use("/positions", positions_router);
 const departments_router = require("./routers/departments_router.js")(pool);
 app.use("/departments", departments_router);
 
-const workers_router = require("./routers/workers_router,js")(pool);
+const workers_router = require("./routers/workers_router.js")(pool);
 app.use("/workers", workers_router);
 
 const files_router = require("./routers/files_router.js")(pool);
@@ -39,6 +39,6 @@ app.get("/", (req, res) => {
   );
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Сервер запущен на http://localhost:${PORT}`);
 });
