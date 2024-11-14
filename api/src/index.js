@@ -18,9 +18,24 @@ app.use("/positions", positions_router);
 const departments_router = require("./routers/departments_router.js")(pool);
 app.use("/departments", departments_router);
 
+const workers_router = require("./routers/workers_router,js")(pool);
+app.use("/workers", workers_router);
+
+const files_router = require("./routers/files_router.js")(pool);
+app.use("/files", files_router);
+
+const personnel_operations_router =
+  require("./routers/personnel_operations_router.js")(pool);
+app.use("/personnel_operations", personnel_operations_router);
+
+const history_changes_router = require("./routers/history_changes_router.js")(
+  pool
+);
+app.use("/history_changes", history_changes_router);
+
 app.get("/", (req, res) => {
   res.send(
-    "Для запуска пропишите путь в строке поиска (Пример: http://localhost:3000/organizations, http://localhost:3000/positions или http://localhost:3000/departments)"
+    "Для запуска пропишите путь в строке поиска (Пример: http://localhost:3000/organizations)"
   );
 });
 
