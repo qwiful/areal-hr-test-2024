@@ -1,6 +1,6 @@
 module.exports = (pool) => {
   return {
-    create_department: async (req, res) => {
+    createDepartment: async (req, res) => {
       const { id_organization, name, id_parent, comment } = req.body;
       try {
         const result = await pool.query(
@@ -13,7 +13,7 @@ module.exports = (pool) => {
       }
     },
 
-    get_departments: async (req, res) => {
+    getDepartments: async (req, res) => {
       try {
         const result = await pool.query("SELECT * FROM departments");
         res.json(result.rows);
@@ -22,7 +22,7 @@ module.exports = (pool) => {
       }
     },
 
-    get_department_id: async (req, res) => {
+    getDepartmentById: async (req, res) => {
       const { id } = req.params;
       try {
         const result = await pool.query(
@@ -39,7 +39,7 @@ module.exports = (pool) => {
       }
     },
 
-    update_department: async (req, res) => {
+    updateDepartment: async (req, res) => {
       const { id } = req.params;
       const { id_organization, name, id_parent, comment } = req.body;
       try {
@@ -57,7 +57,7 @@ module.exports = (pool) => {
       }
     },
 
-    delete_department: async (req, res) => {
+    deleteDepartment: async (req, res) => {
       const { id } = req.params;
       try {
         const result = await pool.query(

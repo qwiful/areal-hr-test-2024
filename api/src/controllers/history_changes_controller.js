@@ -1,6 +1,6 @@
 module.exports = (pool) => {
   return {
-    create_change: async (req, res) => {
+    createChange: async (req, res) => {
       const { who_changed, object, changed_field } = req.body;
       try {
         const result = await pool.query(
@@ -13,7 +13,7 @@ module.exports = (pool) => {
       }
     },
 
-    get_changes: async (req, res) => {
+    getChanges: async (req, res) => {
       try {
         const result = await pool.query("SELECT * FROM history_changes");
         res.json(result.rows);
@@ -22,7 +22,7 @@ module.exports = (pool) => {
       }
     },
 
-    get_change_id: async (req, res) => {
+    getChangeById: async (req, res) => {
       const { id } = req.params;
       try {
         const result = await pool.query(
@@ -39,7 +39,7 @@ module.exports = (pool) => {
       }
     },
 
-    update_change: async (req, res) => {
+    updateChange: async (req, res) => {
       const { id } = req.params;
       const { who_changed, object, changed_field } = req.body;
       try {
@@ -57,7 +57,7 @@ module.exports = (pool) => {
       }
     },
 
-    delete_change: async (req, res) => {
+    deleteChange: async (req, res) => {
       const { id } = req.params;
       try {
         const result = await pool.query(

@@ -1,6 +1,6 @@
 module.exports = (pool) => {
   return {
-    create_file: async (req, res) => {
+    createFile: async (req, res) => {
       const { name, file, id_worker } = req.body;
       try {
         const result = await pool.query(
@@ -13,7 +13,7 @@ module.exports = (pool) => {
       }
     },
 
-    get_files: async (req, res) => {
+    getFiles: async (req, res) => {
       try {
         const result = await pool.query("SELECT * FROM files");
         res.json(result.rows);
@@ -22,7 +22,7 @@ module.exports = (pool) => {
       }
     },
 
-    get_file_id: async (req, res) => {
+    getFileById: async (req, res) => {
       const { id } = req.params;
       try {
         const result = await pool.query("SELECT * FROM files WHERE id = $1", [
@@ -38,7 +38,7 @@ module.exports = (pool) => {
       }
     },
 
-    update_file: async (req, res) => {
+    updateFile: async (req, res) => {
       const { id } = req.params;
       const { name, file, id_worker } = req.body;
       try {
@@ -56,7 +56,7 @@ module.exports = (pool) => {
       }
     },
 
-    delete_file: async (req, res) => {
+    deleteFile: async (req, res) => {
       const { id } = req.params;
       try {
         const result = await pool.query(

@@ -1,6 +1,6 @@
 module.exports = (pool) => {
   return {
-    create_worker: async (req, res) => {
+    createWorker: async (req, res) => {
       const {
         surname,
         name,
@@ -20,7 +20,7 @@ module.exports = (pool) => {
       }
     },
 
-    get_workers: async (req, res) => {
+    getWorkers: async (req, res) => {
       try {
         const result = await pool.query("SELECT * FROM workers");
         res.json(result.rows);
@@ -29,7 +29,7 @@ module.exports = (pool) => {
       }
     },
 
-    get_worker_id: async (req, res) => {
+    getWorkerById: async (req, res) => {
       const { id } = req.params;
       try {
         const result = await pool.query("SELECT * FROM workers WHERE id = $1", [
@@ -45,7 +45,7 @@ module.exports = (pool) => {
       }
     },
 
-    update_worker: async (req, res) => {
+    updateWorker: async (req, res) => {
       const { id } = req.params;
       const {
         surname,
@@ -78,7 +78,7 @@ module.exports = (pool) => {
       }
     },
 
-    delete_worker: async (req, res) => {
+    deleteWorker: async (req, res) => {
       const { id } = req.params;
       try {
         const result = await pool.query(

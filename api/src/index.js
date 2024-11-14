@@ -9,29 +9,29 @@ const pool = new Pool({
 
 app.use(express.json());
 
-const organizations_router = require("./routers/organizations_router.js")(pool);
-app.use("/organizations", organizations_router);
+const organizationsRouter = require("./routers/organizations_router.js")(pool);
+app.use("/organizations", organizationsRouter);
 
-const positions_router = require("./routers/positions_router.js")(pool);
-app.use("/positions", positions_router);
+const positionsRouter = require("./routers/positions_router.js")(pool);
+app.use("/positions", positionsRouter);
 
-const departments_router = require("./routers/departments_router.js")(pool);
-app.use("/departments", departments_router);
+const departmentsRouter = require("./routers/departments_router.js")(pool);
+app.use("/departments", departmentsRouter);
 
-const workers_router = require("./routers/workers_router.js")(pool);
-app.use("/workers", workers_router);
+const workersRouter = require("./routers/workers_router.js")(pool);
+app.use("/workers", workersRouter);
 
-const files_router = require("./routers/files_router.js")(pool);
-app.use("/files", files_router);
+const filesRouter = require("./routers/files_router.js")(pool);
+app.use("/files", filesRouter);
 
-const personnel_operations_router =
+const personnelOperationsrouter =
   require("./routers/personnel_operations_router.js")(pool);
-app.use("/personnel_operations", personnel_operations_router);
+app.use("/personnel_operations", personnelOperationsrouter);
 
-const history_changes_router = require("./routers/history_changes_router.js")(
+const historyChangesRouter = require("./routers/history_changes_router.js")(
   pool
 );
-app.use("/history_changes", history_changes_router);
+app.use("/history_changes", historyChangesRouter);
 
 app.get("/", (req, res) => {
   res.send(

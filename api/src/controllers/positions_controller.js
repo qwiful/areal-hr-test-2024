@@ -1,6 +1,6 @@
 module.exports = (pool) => {
   return {
-    create_position: async (req, res) => {
+    createPosition: async (req, res) => {
       const { name } = req.body;
       try {
         const result = await pool.query(
@@ -13,7 +13,7 @@ module.exports = (pool) => {
       }
     },
 
-    get_positions: async (req, res) => {
+    getPositions: async (req, res) => {
       try {
         const result = await pool.query("SELECT * FROM positions");
         res.json(result.rows);
@@ -22,7 +22,7 @@ module.exports = (pool) => {
       }
     },
 
-    get_position_id: async (req, res) => {
+    getPositionById: async (req, res) => {
       const { id } = req.params;
       try {
         const result = await pool.query(
@@ -39,7 +39,7 @@ module.exports = (pool) => {
       }
     },
 
-    update_position: async (req, res) => {
+    updatePosition: async (req, res) => {
       const { id } = req.params;
       const { name } = req.body;
       try {
@@ -57,7 +57,7 @@ module.exports = (pool) => {
       }
     },
 
-    delete_position: async (req, res) => {
+    deletePosition: async (req, res) => {
       const { id } = req.params;
       try {
         const result = await pool.query(

@@ -1,6 +1,6 @@
 module.exports = (pool) => {
   return {
-    create_operation: async (req, res) => {
+    createOperation: async (req, res) => {
       const {
         id_worker,
         id_department,
@@ -29,7 +29,7 @@ module.exports = (pool) => {
       }
     },
 
-    get_operations: async (req, res) => {
+    getOperations: async (req, res) => {
       try {
         const result = await pool.query("SELECT * FROM personnel_operations");
         res.json(result.rows);
@@ -38,7 +38,7 @@ module.exports = (pool) => {
       }
     },
 
-    get_operation_id: async (req, res) => {
+    getOperationById: async (req, res) => {
       const { id } = req.params;
       try {
         const result = await pool.query(
@@ -55,7 +55,7 @@ module.exports = (pool) => {
       }
     },
 
-    update_operation: async (req, res) => {
+    updateOperation: async (req, res) => {
       const { id } = req.params;
       const {
         id_worker,
@@ -90,7 +90,7 @@ module.exports = (pool) => {
       }
     },
 
-    delete_operation: async (req, res) => {
+    deleteOperation: async (req, res) => {
       const { id } = req.params;
       try {
         const result = await pool.query(
