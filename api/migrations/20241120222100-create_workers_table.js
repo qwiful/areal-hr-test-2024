@@ -8,6 +8,7 @@ module.exports = {
       date_of_birth: { type: "date", notNULL: true },
       id_passport: { type: "integer", notNULL: true },
       id_adress: { type: "integer", notNULL: true },
+      is_deleted: { type: "boolean", notNULL: true },
     });
     pgm.addConstraint("workers", "fk_passport", {
       foreignKeys: {

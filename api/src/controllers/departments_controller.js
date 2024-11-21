@@ -24,6 +24,10 @@ module.exports = (pool) => {
           "INSERT INTO departments (id_organization, name, id_parent, comment) VALUES ($1, $2, $3, $4) RETURNING *",
           [id_organization, name, id_parent, comment]
         );
+        await pool.query(
+          "INSERT INTO history_changes (date_time_operation, who_changed, object, changed_field) VALUES (CURRENT_TIMESTAMP, $1, $2, $3)",
+          [req.user.id, "Отдел", JSON.stringify(result.rows[0])]
+        );
         res.json(result.rows[0]);
       } catch (error) {
         res.status(400).json({ error: error.message });
@@ -72,15 +76,27 @@ module.exports = (pool) => {
       }
       const { id_organization, name, id_parent, comment } = req.body;
       try {
+        const currentResult = await pool.query(
+          "SELECT * FROM departments WHERE id = $1",
+          [id]
+        );
+        if (currentResult.rows.length === 0) {
+          return res.status(404).json({ message: "Отдел не найден" });
+        }
+        const oldData = currentResult.rows[0];
         const result = await pool.query(
           "UPDATE departments SET id_organization = $1, name = $2, id_parent = $3, comment = $4 WHERE id = $5 RETURNING *",
           [id_organization, name, id_parent, comment, id]
         );
-        if (result.rows.length > 0) {
-          res.json(result.rows[0]);
-        } else {
-          res.status(404).json({ message: "Отдел не найден" });
-        }
+        await pool.query(
+          "INSERT INTO history_changes (date_time_operation, who_changed, object, changed_field) VALUES (CURRENT_TIMESTAMP, $1, $2, $3)",
+          [
+            req.user.id,
+            "Отдел",
+            JSON.stringify({ old: oldData, new: result.rows[0] }),
+          ]
+        );
+        res.json(result.rows[0]);
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
@@ -93,15 +109,22 @@ module.exports = (pool) => {
       }
       const { id } = req.params;
       try {
+        const currentResult = await pool.query(
+          "SELECT  FROM departments WHERE id = $1",
+          [id]
+        );
+        if (currentResult.rows.length === 0) {
+          return res.status(404).json({ message: "Отдел не найден" });
+        }
         const result = await pool.query(
           "DELETE FROM departments WHERE id = $1 RETURNING *",
           [id]
         );
-        if (result.rows.length > 0) {
-          res.json({ message: "Отдел удален" });
-        } else {
-          res.status(404).json({ message: "Отдел не найден" });
-        }
+        await pool.query(
+          "INSERT INTO history_changes (date_time_operation, who_changed, object, changed_field) VALUES (CURRENT_TIMESTAMP, $1, $2, $3)",
+          [req.user.id, "Отдел", JSON.stringify(result.rows[0])]
+        );
+        res.json({ message: "Отдел удален" });
       } catch (error) {
         res.status(400).json({ error: error.message });
       }

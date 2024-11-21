@@ -43,6 +43,10 @@ module.exports = (pool) => {
             delite_worker,
           ]
         );
+        await pool.query(
+          "INSERT INTO history_changes (date_time_operation, who_changed, object, changed_field) VALUES (CURRENT_TIMESTAMP, $1, $2, $3)",
+          [req.user.id, "Кадровая операция", JSON.stringify(result.rows[0])]
+        );
         res.json(result.rows[0]);
       } catch (error) {
         res.status(400).json({ error: error.message });
@@ -99,6 +103,14 @@ module.exports = (pool) => {
         delite_worker,
       } = req.body;
       try {
+        const currentResult = await pool.query(
+          "SELECT * FROM personnel_operations WHERE id = $1",
+          [id]
+        );
+        if (currentResult.rows.length === 0) {
+          return res.status(404).json({ message: "Операция не найдена" });
+        }
+        const oldData = currentResult.rows[0];
         const result = await pool.query(
           "UPDATE personnel_operations SET id_worker = $1, id_department = $2, id_position = $3, setting_salary = $4, salary_change = $5, department_change = $6, delite_worker = $7 WHERE id = $8 RETURNING *",
           [
@@ -112,11 +124,15 @@ module.exports = (pool) => {
             id,
           ]
         );
-        if (result.rows.length > 0) {
-          res.json(result.rows[0]);
-        } else {
-          res.status(404).json({ message: "Операция не найдена" });
-        }
+        await pool.query(
+          "INSERT INTO history_changes (date_time_operation, who_changed, object, changed_field) VALUES (CURRENT_TIMESTAMP, $1, $2, $3)",
+          [
+            req.user.id,
+            "Кадровая операция",
+            JSON.stringify({ old: oldData, new: result.rows[0] }),
+          ]
+        );
+        res.json(result.rows[0]);
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
@@ -129,15 +145,22 @@ module.exports = (pool) => {
       }
       const { id } = req.params;
       try {
+        const currentResult = await pool.query(
+          "SELECT * FROM personnel_operations WHERE id = $1",
+          [id]
+        );
+        if (currentResult.rows.length === 0) {
+          return res.status(404).json({ message: "Операция не найдена" });
+        }
         const result = await pool.query(
           "DELETE FROM personnel_operations WHERE id = $1 RETURNING *",
           [id]
         );
-        if (result.rows.length > 0) {
-          res.json({ message: "Операция удалена" });
-        } else {
-          res.status(404).json({ message: "Операция не найдена" });
-        }
+        await pool.query(
+          "INSERT INTO history_changes (date_time_operation, who_changed, object, changed_field) VALUES (CURRENT_TIMESTAMP, $1, $2, $3)",
+          [req.user.id, "Кадровая операция", JSON.stringify(result.rows[0])]
+        );
+        res.json({ message: "Операция удалена" });
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
