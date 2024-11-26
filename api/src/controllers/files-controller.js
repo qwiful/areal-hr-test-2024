@@ -4,6 +4,7 @@ const filesSchema = Joi.object({
   name: Joi.string().min(1).max(50).required(),
   file: Joi.string().min(1).max(100).required(),
   id_worker: Joi.number().integer().required(),
+  is_deleted: Joi.boolean().required(),
 });
 
 const filesIdSchema = Joi.object({
@@ -31,7 +32,7 @@ module.exports = (pool) => {
 
     getFiles: async (req, res) => {
       try {
-        const result = await pool.query("SELECT * FROM files");
+        const result = await pool.query("SELECT * FROM files WHERE is_deleted = FALSE");
         res.json(result.rows);
       } catch (error) {
         res.status(400).json({ error: error.message });
@@ -45,7 +46,7 @@ module.exports = (pool) => {
       }
       const { id } = req.params;
       try {
-        const result = await pool.query("SELECT * FROM files WHERE id = $1", [
+        const result = await pool.query("SELECT * FROM files WHERE id = $1 AND is_deleted = FALSE", [
           id,
         ]);
         if (result.rows.length > 0) {
@@ -92,7 +93,7 @@ module.exports = (pool) => {
       const { id } = req.params;
       try {
         const result = await pool.query(
-          "DELETE FROM files WHERE id = $1 RETURNING *",
+          "UPDATE files SET is_deleted = TRUE WHERE id = $1",
           [id]
         );
         if (result.rows.length > 0) {

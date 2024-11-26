@@ -3,7 +3,7 @@ const router = express.Router();
 
 module.exports = (pool) => {
   const departmentsController =
-    require("../controllers/departments_controller.js")(pool);
+    require("../controllers/departments-controller.js")(pool);
 
   router.post("/", departmentsController.createDepartment);
   router.get("/", departmentsController.getDepartments);

@@ -1,29 +1,33 @@
 const Joi = require("joi");
 
-const positionsSchema = Joi.object({
+const departmentSchema = Joi.object({
+  id_organization: Joi.number().integer().required(),
   name: Joi.string().min(1).max(50).required(),
+  id_parent: Joi.number().integer().required(),
+  comment: Joi.string().max(250).required(),
+  is_deleted: Joi.boolean().required(),
 });
 
-const positionsIdSchema = Joi.object({
+const departmentIdSchema = Joi.object({
   id: Joi.number().integer().required(),
 });
 
 module.exports = (pool) => {
   return {
-    createPosition: async (req, res) => {
-      const { error } = positionsSchema.validate(req.body);
+    createDepartment: async (req, res) => {
+      const { error } = departmentSchema.validate(req.body);
       if (error) {
         return res.status(400).json({ error: error.details[0].message });
       }
-      const { name } = req.body;
+      const { id_organization, name, id_parent, comment } = req.body;
       try {
         const result = await pool.query(
-          "INSERT INTO positions (name) VALUES ($1) RETURNING *",
-          [name]
+          "INSERT INTO departments (id_organization, name, id_parent, comment) VALUES ($1, $2, $3, $4) RETURNING *",
+          [id_organization, name, id_parent, comment]
         );
         await pool.query(
           "INSERT INTO history_changes (date_time_operation, who_changed, object, changed_field) VALUES (CURRENT_TIMESTAMP, $1, $2, $3)",
-          [req.user.id, "Должность", JSON.stringify(result.rows[0])]
+          [req.user.id, "Отдел", JSON.stringify(result.rows[0])]
         );
         res.json(result.rows[0]);
       } catch (error) {
@@ -31,65 +35,65 @@ module.exports = (pool) => {
       }
     },
 
-    getPositions: async (req, res) => {
+    getDepartments: async (req, res) => {
       try {
-        const result = await pool.query("SELECT * FROM positions");
+        const result = await pool.query("SELECT * FROM departments WHERE is_deleted = FALSE");
         res.json(result.rows);
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
     },
 
-    getPositionById: async (req, res) => {
-      const { error } = positionsIdSchema.validate(req.params);
+    getDepartmentById: async (req, res) => {
+      const { error } = departmentIdSchema.validate(req.params);
       if (error) {
         return res.status(400).json({ error: error.details[0].message });
       }
       const { id } = req.params;
       try {
         const result = await pool.query(
-          "SELECT * FROM positions WHERE id = $1",
+          "SELECT * FROM departments WHERE id = $1 AND is_deleted = FALSE",
           [id]
         );
         if (result.rows.length > 0) {
           res.json(result.rows[0]);
         } else {
-          res.status(404).json({ message: "Должность не найдена" });
+          res.status(404).json({ message: "Отдел не найден" });
         }
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
     },
 
-    updatePosition: async (req, res) => {
+    updateDepartment: async (req, res) => {
       const { id } = req.params;
-      const { error: idError } = positionsIdSchema.validate(req.params);
+      const { error: idError } = departmentIdSchema.validate(req.params);
       if (idError) {
         return res.status(400).json({ error: idError.details[0].message });
       }
-      const { error } = positionsSchema.validate(req.body);
+      const { error } = departmentSchema.validate(req.body);
       if (error) {
         return res.status(400).json({ error: error.details[0].message });
       }
-      const { name } = req.body;
+      const { id_organization, name, id_parent, comment } = req.body;
       try {
         const currentResult = await pool.query(
-          "SELECT * FROM positions WHERE id = $1",
+          "SELECT * FROM departments WHERE id = $1",
           [id]
         );
         if (currentResult.rows.length === 0) {
-          return res.status(404).json({ message: "Должность не найдена" });
+          return res.status(404).json({ message: "Отдел не найден" });
         }
         const oldData = currentResult.rows[0];
         const result = await pool.query(
-          "UPDATE positions SET name = $1 WHERE id = $2 RETURNING *",
-          [name, id]
+          "UPDATE departments SET id_organization = $1, name = $2, id_parent = $3, comment = $4 WHERE id = $5 RETURNING *",
+          [id_organization, name, id_parent, comment, id]
         );
         await pool.query(
           "INSERT INTO history_changes (date_time_operation, who_changed, object, changed_field) VALUES (CURRENT_TIMESTAMP, $1, $2, $3)",
           [
             req.user.id,
-            "Должность",
+            "Отдел",
             JSON.stringify({ old: oldData, new: result.rows[0] }),
           ]
         );
@@ -99,29 +103,29 @@ module.exports = (pool) => {
       }
     },
 
-    deletePosition: async (req, res) => {
-      const { error } = positionsIdSchema.validate(req.params);
+    deleteDepartment: async (req, res) => {
+      const { error } = departmentIdSchema.validate(req.params);
       if (error) {
         return res.status(400).json({ error: error.details[0].message });
       }
       const { id } = req.params;
       try {
         const currentResult = await pool.query(
-          "SELECT * FROM positions WHERE id = $1",
+          "SELECT FROM departments WHERE id = $1 AND is_deleted = FALSE",
           [id]
         );
         if (currentResult.rows.length === 0) {
-          return res.status(404).json({ message: "Должность не найдена" });
+          return res.status(404).json({ message: "Отдел не найден" });
         }
         const result = await pool.query(
-          "DELETE FROM positions WHERE id = $1 RETURNING *",
+          "UPDATE departments SET is_deleted = TRUE WHERE id = $1",
           [id]
         );
         await pool.query(
           "INSERT INTO history_changes (date_time_operation, who_changed, object, changed_field) VALUES (CURRENT_TIMESTAMP, $1, $2, $3)",
-          [req.user.id, "Должность", JSON.stringify(result.rows[0])]
+          [req.user.id, "Отдел", JSON.stringify(result.rows[0])]
         );
-        res.json({ message: "Должность удалена" });
+        res.json({ message: "Отдел удален" });
       } catch (error) {
         res.status(400).json({ error: error.message });
       }

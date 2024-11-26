@@ -6,6 +6,7 @@ module.exports = {
       name: { type: "varchar(50)", notNULL: true },
       id_parent: { type: "integer", notNULL: true },
       comment: { type: "varchar(250)", notNULL: true },
+      is_deleted: { type: "boolean", notNULL: true },
     });
     pgm.addConstraint("departments", "fk_parent", {
       foreignKeys: {

@@ -12,6 +12,7 @@
     "node-pg-migrate": "^7.7.1"
   },
   "scripts": {
-    "migrate": "node-pg-migrate"
+    "migrate": "node-pg-migrate up",
+    "start": "npm run migrate"
   }
 }

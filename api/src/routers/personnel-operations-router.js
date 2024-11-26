@@ -3,7 +3,7 @@ const router = express.Router();
 
 module.exports = (pool) => {
   const personnelOperationsController =
-    require("../controllers/personnel_operations_controller.js")(pool);
+    require("../controllers/personnel-operations-controller.js")(pool);
 
   router.post("/", personnelOperationsController.createOperation);
   router.get("/", personnelOperationsController.getOperations);

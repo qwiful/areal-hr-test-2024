@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = (pool) => {
-  const filesController = require("../controllers/files_controller.js")(pool);
+  const filesController = require("../controllers/files-controller.js")(pool);
 
   router.post("/", filesController.createFile);
   router.get("/", filesController.getFiles);

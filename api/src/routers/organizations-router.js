@@ -3,7 +3,7 @@ const router = express.Router();
 
 module.exports = (pool) => {
   const organizationsController =
-    require("../controllers/organizations_controller.js")(pool);
+    require("../controllers/organizations-controller.js")(pool);
 
   router.post("/", organizationsController.createOrganization);
   router.get("/", organizationsController.getOrganizations);

@@ -5,6 +5,7 @@ module.exports = {
       name: { type: "varchar(50)", notNULL: true },
       file: { type: "varchar(100)", notNULL: true },
       id_worker: { type: "integer", notNULL: true },
+      is_deleted: { type: "boolean", notNULL: true },
     });
     pgm.addConstraint("files", "fk_skan", {
       foreignKeys: {

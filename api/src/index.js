@@ -9,26 +9,26 @@ const pool = new Pool({
 
 app.use(express.json());
 
-const organizationsRouter = require("./routers/organizations_router.js")(pool);
+const organizationsRouter = require("./routers/organizations-router.js")(pool);
 app.use("/organizations", organizationsRouter);
 
-const positionsRouter = require("./routers/positions_router.js")(pool);
+const positionsRouter = require("./routers/positions-router.js")(pool);
 app.use("/positions", positionsRouter);
 
-const departmentsRouter = require("./routers/departments_router.js")(pool);
+const departmentsRouter = require("./routers/departments-router.js")(pool);
 app.use("/departments", departmentsRouter);
 
-const workersRouter = require("./routers/workers_router.js")(pool);
+const workersRouter = require("./routers/workers-router.js")(pool);
 app.use("/workers", workersRouter);
 
-const filesRouter = require("./routers/files_router.js")(pool);
+const filesRouter = require("./routers/files-router.js")(pool);
 app.use("/files", filesRouter);
 
 const personnelOperationsrouter =
-  require("./routers/personnel_operations_router.js")(pool);
+  require("./routers/personnel-operations-router.js")(pool);
 app.use("/personnel_operations", personnelOperationsrouter);
 
-const historyChangesRouter = require("./routers/history_changes_router.js")(
+const historyChangesRouter = require("./routers/history-changes-router.js")(
   pool
 );
 app.use("/history_changes", historyChangesRouter);

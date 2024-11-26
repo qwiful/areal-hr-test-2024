@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = (pool) => {
-  const workersController = require("../controllers/workers_controller.js")(
+  const workersController = require("../controllers/workers-controller.js")(
     pool
   );
 

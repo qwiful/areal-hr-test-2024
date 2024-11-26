@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = (pool) => {
-  const positionsController = require("../controllers/positions_controller.js")(
+  const positionsController = require("../controllers/positions-controller.js")(
     pool
   );
 
